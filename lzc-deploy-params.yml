@@ -1,0 +1,5 @@
+params:
+  - id: fusion_password
+    type: secret
+    name: 登录密码
+    description: 打开 Fusion 时使用的共享口令

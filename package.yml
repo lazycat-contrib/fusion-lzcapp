@@ -1,0 +1,18 @@
+package: community.lazycat.app.fusion
+name: Fusion
+version: 0.0.0
+description: "Lightweight RSS reader with unread tracking, bookmarks, search and Fever API support."
+min_os_version: "1.5.0"
+homepage: https://github.com/0x2E/fusion
+author: Rook1e
+license: MIT
+permissions:
+  required:
+    - net.internet
+locales:
+  zh:
+    name: Fusion
+    description: "轻量 RSS 阅读器：未读追踪、收藏、搜索，兼容 Fever API 客户端。"
+  en:
+    name: Fusion
+    description: "Lightweight RSS reader with unread tracking, bookmarks, search and Fever API support."

@@ -1,0 +1,46 @@
+application:
+  subdomain: fusion
+  multi_instance: false
+  # Fusion only has one shared password (no user accounts), so the platform
+  # login gate stays in front of it instead of public_path.
+  upstreams:
+    - location: /package-licenses/
+      backend: file:///lzcapp/pkg/content/licenses/
+    - location: /
+      backend: http://fusion:8080/
+
+services:
+  fusion:
+    # upstream: ghcr.io/0x2e/fusion:1.3.0
+    image: ghcr.1ms.run/0x2e/fusion:1.3.0
+    environment:
+      - FUSION_PORT=8080
+      - FUSION_DB_PATH=/data/fusion.db
+      - FUSION_ALLOW_EMPTY_PASSWORD=false
+      - FUSION_PASSWORD={{ printf "%x" (stable_secret "fusion_password") }}
+      - TZ=Asia/Shanghai
+    binds:
+      - /lzcapp/var/data:/data
+
+usage: |
+  Fusion 是一个轻量 RSS 阅读器：订阅源分组、未读追踪、收藏、搜索，
+  支持 Google Reader 风格快捷键，也兼容 Fever API（Reeder / Unread / FeedMe 等客户端）。
+
+  使用方法：
+  1. 打开应用，输入登录密码。
+     密码是本应用首次安装时随机生成的，可在应用详情里查看。
+     对应的变量名是 FUSION_PASSWORD —— 这是 Fusion 上游的历史遗留命名，
+     不是乱码，它就是登录口令本身。
+  2. 登录后左侧「+」添加订阅源，粘贴站点地址或 RSS 链接即可，支持自动发现。
+  3. 想用第三方阅读器的话，在设置里拿 Fever API 的 key，
+     客户端地址填本站域名即可同步。
+
+  数据与安全：
+  - 订阅源、文章、已读状态都在 SQLite 数据库里，路径 /lzcapp/var/data，
+    随应用持久化；卸载应用会一并删除，重要订阅请自行备份。
+  - 未使用 public_path：Fusion 只有单一共享口令、没有账号体系，
+    直接对外开放等于把整个阅读器交给一个密码，因此保留平台入口鉴权。
+  - 单容器运行，无外部数据库、无 Redis。
+
+  说明：
+  - 未做实机验证：登录、添加订阅源、抓取文章、Fever API 均未在设备上实测。
